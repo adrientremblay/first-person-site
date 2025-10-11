@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
-// Setting up renderer
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+// Setting up web GL renderer
+const webGlRenderer = new THREE.WebGLRenderer();
+webGlRenderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( webGlRenderer.domElement );
 
 // Creating scene and camera
 const scene = new THREE.Scene();
@@ -15,13 +16,14 @@ camera.rotation.set(0,Math.PI/2,0)
 
 
 // Setting up camera controls
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, webGlRenderer.domElement);
 
 // Load the scene model
 const loader = new GLTFLoader();
 loader.load( '/scene.glb', function ( gltf ) {
   scene.add( gltf.scene );
   controls.target.set(gltf.scene.position.x, gltf.scene.position.y, gltf.scene.position.z);
+  //controls.update();
 }, undefined, function ( error ) {
   console.error( error );
 } );
@@ -35,8 +37,33 @@ light.castShadow = false
 light.decay = 0.5
 scene.add(light)
 
+// Setting up cssRenderer
+const cssRenderer = new CSS3DRenderer();
+cssRenderer.setSize(window.innerWidth, window.innerHeight);
+cssRenderer.domElement.style.position = 'absolute';
+cssRenderer.domElement.style.top = '0px';
+cssRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(cssRenderer.domElement);
+
+// Setting up the screen iframe DOM element
+const iframe = document.createElement('iframe');
+iframe.src="https://www.youtube.com/embed/ck_ngTil_jQ?rel=0";
+iframe.style.width = '1440px';
+iframe.style.height = '900px';
+iframe.style.border = '0';
+iframe.allow='autoplay';
+iframe.autoplay=1;
+
+const cssObject = new CSS3DObject(iframe);
+cssObject.position.set(0, 3.4, 1); // position it on your monitor
+cssObject.scale.set(0.0015, 0.0015, 0.0015); // scale down large iframe
+cssObject.rotation.set(0,Math.PI/2,0)
+scene.add(cssObject);
+
 // Animate function
 function animate() {
-  renderer.render( scene, camera );
+  requestAnimationFrame(animate);
+  webGlRenderer.render( scene, camera );
+  cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 }
-renderer.setAnimationLoop( animate );
+webGlRenderer.setAnimationLoop( animate );
