@@ -35,16 +35,8 @@ light.castShadow = false
 light.decay = 0.5
 scene.add(light)
 
-//const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-//const cube = new THREE.Mesh( geometry, material );
-//cube.position.z = -5
-//scene.add( cube );
-
 // Animate function
 function animate() {
   renderer.render( scene, camera );
-  //cube.rotation.x += 0.01;
-  //cube.rotation.y += 0.01;
 }
 renderer.setAnimationLoop( animate );
