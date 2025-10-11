@@ -73,6 +73,7 @@ scene.add(cssObject);
 function animate() {
   requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
-  //cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
+  cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 }
-webGlRenderer.setAnimationLoop( animate );
+//webGlRenderer.setAnimationLoop( animate );
+controls.addEventListener('change', animate); // only re-render when camera moves
