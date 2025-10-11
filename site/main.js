@@ -4,13 +4,16 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 // Constants
-var baseWidth = 1440;
-var baseHeight = 900;
-var baseScale = 0.0015;
-var factor = 0.5;
-var screenWidth = baseWidth * factor;
-var screenHeight = baseHeight * factor;
-var screenScale = baseScale / factor;
+const BASE_WIDTH = 1440;
+const BASE_HEIGHT = 900;
+const BASE_SCALE = 0.0015;
+const FACTOR = 0.5;
+const SCREEN_WIDTH = BASE_WIDTH * FACTOR;
+const SCREEN_HEIGHT = BASE_HEIGHT * FACTOR;
+const SCREEN_SCALE = BASE_SCALE / FACTOR;
+
+const CAMERA_BASE_POSITION = new THREE.Vector3(5,4,2);
+
 
 // Setting up web GL renderer
 const webGlRenderer = new THREE.WebGLRenderer();
@@ -20,19 +23,13 @@ document.body.appendChild( webGlRenderer.domElement );
 // Creating scene and camera
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.set(7,4,2)
+camera.position.set(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z)
 camera.rotation.set(0,Math.PI/2,0)
-
-
-// Setting up camera controls
-const controls = new OrbitControls(camera, webGlRenderer.domElement);
-
 
 // Load the scene model
 const loader = new GLTFLoader();
 loader.load( '/scene.glb', function ( gltf ) {
   scene.add( gltf.scene );
-  controls.target.set(gltf.scene.position.x, gltf.scene.position.y, gltf.scene.position.z);
   //controls.update();
 }, undefined, function ( error ) {
   console.error( error );
@@ -58,21 +55,21 @@ document.body.appendChild(cssRenderer.domElement);
 // Setting up the screen iframe DOM element
 const iframe = document.createElement('iframe');
 iframe.src="https://adrientremblay.com";
-iframe.style.width = screenWidth+'px';
-iframe.style.height = screenHeight+'px';
+iframe.style.width = SCREEN_WIDTH+'px';
+iframe.style.height = SCREEN_HEIGHT+'px';
 iframe.style.border = '0';
 iframe.allow='autoplay';
 iframe.autoplay=1;
 
 const cssObject = new CSS3DObject(iframe);
 cssObject.position.set(0, 3.4, 1); // position it on your monitor
-cssObject.scale.set(screenScale,screenScale,screenScale); // scale down large iframe
+cssObject.scale.set(SCREEN_SCALE,SCREEN_SCALE,SCREEN_SCALE); // scale down large iframe
 cssObject.rotation.set(0,Math.PI/2,0)
 scene.add(cssObject);
 
 
 // Setting up a plane for detecting when the mouse is over the screen
-const planeGeometry = new THREE.PlaneGeometry(screenScale * baseWidth * factor,screenScale * baseHeight * factor);
+const planeGeometry = new THREE.PlaneGeometry(SCREEN_SCALE * BASE_WIDTH * FACTOR,SCREEN_SCALE * BASE_HEIGHT * FACTOR);
 const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: true });
 const hoverPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 hoverPlane.position.copy(cssObject.position);
@@ -90,9 +87,17 @@ function onMouseMove(event) {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
     const hovering = intersects.length > 0;
-    console.log(hovering)
+    if (hovering) {
+      camera.position.copy(hoverPlane.position);
+      camera.position.x += 2;
+      camera.lookAt(hoverPlane.position)
+    }
 }
 window.addEventListener('mousemove', onMouseMove);
+
+// Setting up camera controls
+const controls = new OrbitControls(camera, webGlRenderer.domElement);
+controls.target.set(hoverPlane.position.x, hoverPlane.position.y, hoverPlane.position.z);
 
 // Animate function
 function animate() {
