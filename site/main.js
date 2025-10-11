@@ -3,6 +3,15 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
+// Constants
+var baseWidth = 1440;
+var baseHeight = 900;
+var baseScale = 0.0015;
+var factor = 0.5;
+var screenWidth = baseWidth * factor;
+var screenHeight = baseHeight * factor;
+var screenScale = baseScale / factor;
+
 // Setting up web GL renderer
 const webGlRenderer = new THREE.WebGLRenderer();
 webGlRenderer.setSize( window.innerWidth, window.innerHeight );
@@ -47,16 +56,16 @@ document.body.appendChild(cssRenderer.domElement);
 
 // Setting up the screen iframe DOM element
 const iframe = document.createElement('iframe');
-iframe.src="https://www.youtube.com/embed/ck_ngTil_jQ?rel=0";
-iframe.style.width = '1440px';
-iframe.style.height = '900px';
+iframe.src="https://adrientremblay.com";
+iframe.style.width = screenWidth+'px';
+iframe.style.height = screenHeight+'px';
 iframe.style.border = '0';
 iframe.allow='autoplay';
 iframe.autoplay=1;
 
 const cssObject = new CSS3DObject(iframe);
 cssObject.position.set(0, 3.4, 1); // position it on your monitor
-cssObject.scale.set(0.0015, 0.0015, 0.0015); // scale down large iframe
+cssObject.scale.set(screenScale,screenScale,screenScale); // scale down large iframe
 cssObject.rotation.set(0,Math.PI/2,0)
 scene.add(cssObject);
 
@@ -64,6 +73,6 @@ scene.add(cssObject);
 function animate() {
   requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
-  cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
+  //cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 }
 webGlRenderer.setAnimationLoop( animate );
