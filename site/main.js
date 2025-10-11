@@ -27,6 +27,7 @@ camera.rotation.set(0,Math.PI/2,0)
 // Setting up camera controls
 const controls = new OrbitControls(camera, webGlRenderer.domElement);
 
+
 // Load the scene model
 const loader = new GLTFLoader();
 loader.load( '/scene.glb', function ( gltf ) {
@@ -69,6 +70,30 @@ cssObject.scale.set(screenScale,screenScale,screenScale); // scale down large if
 cssObject.rotation.set(0,Math.PI/2,0)
 scene.add(cssObject);
 
+
+// Setting up a plane for detecting when the mouse is over the screen
+const planeGeometry = new THREE.PlaneGeometry(screenScale * baseWidth * factor,screenScale * baseHeight * factor);
+const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: true });
+const hoverPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+hoverPlane.position.copy(cssObject.position);
+hoverPlane.rotation.copy(cssObject.rotation);
+scene.add(hoverPlane);
+
+const raycaster = new THREE.Raycaster();
+
+function onMouseMove(event) {
+    const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    const mouseY = - (event.clientY / window.innerHeight) * 2 + 1;
+    const mouse = new THREE.Vector2(mouseX, mouseY);
+
+    // Raycast
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(hoverPlane);
+    const hovering = intersects.length > 0;
+    console.log(hovering)
+}
+window.addEventListener('mousemove', onMouseMove);
+
 // Animate function
 function animate() {
   requestAnimationFrame(animate);
@@ -77,3 +102,4 @@ function animate() {
 }
 //webGlRenderer.setAnimationLoop( animate );
 controls.addEventListener('change', animate); // only re-render when camera moves
+animate()
