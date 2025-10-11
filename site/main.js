@@ -119,6 +119,7 @@ function animate() {
     camera.position.lerp(hoverTargetPosition, 0.03);
     if (camera.position.distanceTo(hoverTargetPosition) < 0.05) {
       //camera.quaternion.slerp(targetQuat, 0.01);
+      camera.lookAt(hoverPlane.position);
     }
   }
 }
