@@ -14,6 +14,9 @@ const SCREEN_SCALE = BASE_SCALE / FACTOR;
 
 const CAMERA_BASE_POSITION = new THREE.Vector3(5,4,2);
 
+// Animation variables
+var hovering = false
+var hoverTargetPosition = new THREE.Vector3()
 
 // Setting up web GL renderer
 const webGlRenderer = new THREE.WebGLRenderer();
@@ -67,7 +70,6 @@ cssObject.scale.set(SCREEN_SCALE,SCREEN_SCALE,SCREEN_SCALE); // scale down large
 cssObject.rotation.set(0,Math.PI/2,0)
 scene.add(cssObject);
 
-
 // Setting up a plane for detecting when the mouse is over the screen
 const planeGeometry = new THREE.PlaneGeometry(SCREEN_SCALE * BASE_WIDTH * FACTOR,SCREEN_SCALE * BASE_HEIGHT * FACTOR);
 const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: true });
@@ -75,6 +77,8 @@ const hoverPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 hoverPlane.position.copy(cssObject.position);
 hoverPlane.rotation.copy(cssObject.rotation);
 scene.add(hoverPlane);
+hoverTargetPosition.copy(hoverPlane.position);
+hoverTargetPosition.x += 1.5;
 
 const raycaster = new THREE.Raycaster();
 
@@ -86,12 +90,12 @@ function onMouseMove(event) {
     // Raycast
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
-    const hovering = intersects.length > 0;
-    if (hovering) {
-      camera.position.copy(hoverPlane.position);
-      camera.position.x += 2;
-      camera.lookAt(hoverPlane.position)
-    }
+    hovering = intersects.length > 0;
+    // if (hovering) {
+    //   camera.position.copy(hoverPlane.position);
+    //   camera.position.x += 2;
+    //   camera.lookAt(hoverPlane.position)
+    // }
 }
 window.addEventListener('mousemove', onMouseMove);
 
@@ -99,11 +103,24 @@ window.addEventListener('mousemove', onMouseMove);
 const controls = new OrbitControls(camera, webGlRenderer.domElement);
 controls.target.set(hoverPlane.position.x, hoverPlane.position.y, hoverPlane.position.z);
 
+const targetCamera = new THREE.Object3D();
+targetCamera.position.copy(hoverTargetPosition); // optional if camera moves
+targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
+const targetQuat = targetCamera.quaternion.clone();
+
 // Animate function
 function animate() {
   requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
   cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
+
+  // Zoom into the screen
+  if (hovering) {
+    camera.position.lerp(hoverTargetPosition, 0.03);
+    if (camera.position.distanceTo(hoverTargetPosition) < 0.05) {
+      //camera.quaternion.slerp(targetQuat, 0.01);
+    }
+  }
 }
 //webGlRenderer.setAnimationLoop( animate );
 controls.addEventListener('change', animate); // only re-render when camera moves
