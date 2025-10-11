@@ -82,6 +82,16 @@ hoverTargetPosition.x += 1.5;
 
 const raycaster = new THREE.Raycaster();
 
+// Setting up camera controls
+const controls = new OrbitControls(camera, webGlRenderer.domElement);
+controls.target.set(hoverPlane.position.x, hoverPlane.position.y, hoverPlane.position.z);
+
+const targetCamera = new THREE.Object3D();
+targetCamera.position.copy(hoverTargetPosition); // optional if camera moves
+targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
+const targetQuat = targetCamera.quaternion.clone();
+
+// On mouse move event for zooming into the screen
 function onMouseMove(event) {
     const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
     const mouseY = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -91,22 +101,16 @@ function onMouseMove(event) {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
     hovering = intersects.length > 0;
-    // if (hovering) {
-    //   camera.position.copy(hoverPlane.position);
-    //   camera.position.x += 2;
-    //   camera.lookAt(hoverPlane.position)
-    // }
+    if (hovering) {
+       controls.enabled = false;
+       camera.position.copy(hoverPlane.position);
+       camera.position.x += 2;
+       camera.lookAt(hoverPlane.position)
+    } else {
+      controls.enabled = true;
+    }
 }
 window.addEventListener('mousemove', onMouseMove);
-
-// Setting up camera controls
-const controls = new OrbitControls(camera, webGlRenderer.domElement);
-controls.target.set(hoverPlane.position.x, hoverPlane.position.y, hoverPlane.position.z);
-
-const targetCamera = new THREE.Object3D();
-targetCamera.position.copy(hoverTargetPosition); // optional if camera moves
-targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
-const targetQuat = targetCamera.quaternion.clone();
 
 // Animate function
 function animate() {
