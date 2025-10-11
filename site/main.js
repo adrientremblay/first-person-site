@@ -4,6 +4,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 // Constants
+const CLOCK = new THREE.Clock();
+
 const BASE_WIDTH = 1440;
 const BASE_HEIGHT = 900;
 const BASE_SCALE = 0.0015;
@@ -103,9 +105,6 @@ function onMouseMove(event) {
     hovering = intersects.length > 0;
     if (hovering) {
        controls.enabled = false;
-       camera.position.copy(hoverPlane.position);
-       camera.position.x += 2;
-       camera.lookAt(hoverPlane.position)
     } else {
       controls.enabled = true;
     }
@@ -114,13 +113,17 @@ window.addEventListener('mousemove', onMouseMove);
 
 // Animate function
 function animate() {
+  const delta = CLOCK.getDelta();
+
   requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
-  cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
+  //cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
   // Zoom into the screen
   if (hovering) {
-    camera.position.lerp(hoverTargetPosition, 0.03);
+    const lerpSpeed = 4.0;
+    const t = 1- Math.exp(-lerpSpeed * delta);
+    camera.position.lerp(hoverTargetPosition, t);
     if (camera.position.distanceTo(hoverTargetPosition) < 0.05) {
       //camera.quaternion.slerp(targetQuat, 0.01);
       camera.lookAt(hoverPlane.position);
