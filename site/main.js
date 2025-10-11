@@ -88,11 +88,6 @@ const raycaster = new THREE.Raycaster();
 const controls = new OrbitControls(camera, webGlRenderer.domElement);
 controls.target.set(hoverPlane.position.x, hoverPlane.position.y, hoverPlane.position.z);
 
-const targetCamera = new THREE.Object3D();
-targetCamera.position.copy(hoverTargetPosition); // optional if camera moves
-targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
-const targetQuat = targetCamera.quaternion.clone();
-
 // On mouse move event for zooming into the screen
 function onMouseMove(event) {
     const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
@@ -111,13 +106,20 @@ function onMouseMove(event) {
 }
 window.addEventListener('mousemove', onMouseMove);
 
+// Target rotation (look at the monitor)
+const targetCamera = new THREE.Object3D();
+targetCamera.position.copy(hoverPlane.position); // optional if camera moves
+targetCamera.position.x -= 2;
+targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
+const targetQuat = targetCamera.quaternion.clone();
+
 // Animate function
 function animate() {
   const delta = CLOCK.getDelta();
 
   requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
-  //cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
+  cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
   // Zoom into the screen
   if (hovering) {
@@ -125,8 +127,8 @@ function animate() {
     const t = 1- Math.exp(-lerpSpeed * delta);
     camera.position.lerp(hoverTargetPosition, t);
     if (camera.position.distanceTo(hoverTargetPosition) < 0.05) {
-      //camera.quaternion.slerp(targetQuat, 0.01);
-      camera.lookAt(hoverPlane.position);
+      //camera.lookAt(hoverPlane.position);
+      camera.quaternion.slerp(targetQuat, t);
     }
   }
 }
