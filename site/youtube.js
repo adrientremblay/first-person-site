@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 import {
@@ -7,7 +6,7 @@ import {
   CSS3DObject,
 } from "three/addons/renderers/CSS3DRenderer.js";
 
-let camera, scene, renderer, webGlRenderer, cube;
+let camera, scene, renderer;
 let controls;
 
 function Element(id, x, y, z, ry) {
@@ -34,24 +33,20 @@ init();
 animate();
 
 function init() {
-  const container = document.body;
+  const container = document.getElementById("container");
 
   camera = new THREE.PerspectiveCamera(
-    75,
+    50,
     window.innerWidth / window.innerHeight,
     1,
-    5000,
+    5000
   );
-  //camera.position.set(0, 1, 10);
   camera.position.set(500, 350, 750);
 
   scene = new THREE.Scene();
 
   renderer = new CSS3DRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0px';
-    renderer.domElement.style.pointerEvents = 'auto';
   container.appendChild(renderer.domElement);
 
   const group = new THREE.Group();
@@ -66,27 +61,17 @@ function init() {
 
   window.addEventListener("resize", onWindowResize);
 
+  // Block iframe events when dragging camera
 
-    // Setting up web GL renderer
-    webGlRenderer = new THREE.WebGLRenderer();
-    webGlRenderer.setSize( window.innerWidth, window.innerHeight );
-    webGlRenderer.setAnimationLoop(animate);
-    //webGlRenderer.domElement.style.pointerEvents = 'none';
-    document.body.appendChild( webGlRenderer.domElement );
+  const blocker = document.getElementById("blocker");
+  blocker.style.display = "none";
 
-    const geometry = new THREE.BoxGeometry( 100, 100, 100 );
-    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    cube = new THREE.Mesh( geometry, material );
-    scene.add( cube );
-
-    // Load the scene model
-    const loader = new GLTFLoader();
-    loader.load( '/scene.glb', function ( gltf ) {
-    //scene.add( gltf.scene );
-    //controls.update();
-    }, undefined, function ( error ) {
-    console.error( error );
-    } );
+  controls.addEventListener("start", function () {
+    blocker.style.display = "";
+  });
+  controls.addEventListener("end", function () {
+    blocker.style.display = "none";
+  });
 }
 
 function onWindowResize() {
@@ -99,5 +84,4 @@ function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
-  webGlRenderer.render( scene, camera );
 }
