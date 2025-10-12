@@ -8,7 +8,7 @@ const CLOCK = new THREE.Clock();
 
 const BASE_WIDTH = 1440;
 const BASE_HEIGHT = 900;
-const BASE_SCALE = 0.0015;
+const BASE_SCALE = 0.0013;
 const SCREEN_WIDTH = BASE_WIDTH;
 const SCREEN_HEIGHT = BASE_HEIGHT;
 const SCREEN_SCALE = BASE_SCALE;
@@ -75,7 +75,7 @@ div.appendChild(iframe);
 
 const cssObject = new CSS3DObject(div);
 cssObject.scale.set(SCREEN_SCALE, SCREEN_SCALE, SCREEN_SCALE);
-cssObject.position.set(1, 3.4, 1); // position it on your monitor
+cssObject.position.set(0.13, 3.3, 0.9); // position it on your monitor
 cssObject.rotation.set(0,Math.PI/2,0)
 scene.add(cssObject);
 
