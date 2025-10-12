@@ -123,7 +123,7 @@ const targetQuat = targetCamera.quaternion.clone();
 function animate() {
   const delta = CLOCK.getDelta();
 
-  requestAnimationFrame(animate);
+  //requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
   cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
@@ -138,6 +138,6 @@ function animate() {
     }
   }
 }
-//webGlRenderer.setAnimationLoop( animate );
-controls.addEventListener('change', animate); // only re-render when camera moves
+webGlRenderer.setAnimationLoop( animate );
+//controls.addEventListener('change', animate); // only re-render when camera moves
 animate()
