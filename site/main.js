@@ -64,6 +64,7 @@ div.style.width = SCREEN_WIDTH+'px';
 div.style.height = SCREEN_HEIGHT+'px';
 
 
+
 const iframe = document.createElement('iframe');
 //iframe.src="https://www.youtube.com/embed/ck_ngTil_jQ?rel=0";
 iframe.src="https://adrientremblay.com";
@@ -121,9 +122,18 @@ targetCamera.position.x -= 2;
 targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
 const targetQuat = targetCamera.quaternion.clone();
 
+function updateScreenVisibility() {
+  const screenNormal = new THREE.Vector3(0, 0, 1).applyQuaternion(cssObject.quaternion);
+  const camDir = new THREE.Vector3().subVectors(camera.position, cssObject.position).normalize();
+  const dot = screenNormal.dot(camDir); // 1 = front, -1 = back
+  div.style.opacity = THREE.MathUtils.clamp((dot + 0.1) / 1.1, 0, 1); // fade near back
+}
+
 // Animate function
 function animate() {
   const delta = CLOCK.getDelta();
+
+  updateScreenVisibility();
 
   //requestAnimationFrame(animate);
   webGlRenderer.render( scene, camera );
