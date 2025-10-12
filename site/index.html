@@ -5,6 +5,14 @@
     <title>My first three.js app</title>
     <style>
       body { margin: 0; }
+
+      #blocker {
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+			}
     </style>
     <script type="importmap">
         {
@@ -17,5 +25,7 @@
   </head>
   <body>
     <script type="module" src="/main.js"></script>
+		<div id="container"></div>
+		<div id="blocker"></div>
   </body>
 </html>
