@@ -9,10 +9,9 @@ const CLOCK = new THREE.Clock();
 const BASE_WIDTH = 1440;
 const BASE_HEIGHT = 900;
 const BASE_SCALE = 0.0015;
-const FACTOR = 0.5;
-const SCREEN_WIDTH = BASE_WIDTH * FACTOR;
-const SCREEN_HEIGHT = BASE_HEIGHT * FACTOR;
-const SCREEN_SCALE = BASE_SCALE / FACTOR;
+const SCREEN_WIDTH = BASE_WIDTH;
+const SCREEN_HEIGHT = BASE_HEIGHT;
+const SCREEN_SCALE = BASE_SCALE;
 
 const CAMERA_BASE_POSITION = new THREE.Vector3(5,4,2);
 
@@ -73,13 +72,13 @@ iframe.style.border = '0';
 div.appendChild(iframe);
 
 const cssObject = new CSS3DObject(div);
+cssObject.scale.set(SCREEN_SCALE, SCREEN_SCALE, SCREEN_SCALE);
 cssObject.position.set(1, 3.4, 1); // position it on your monitor
-cssObject.scale.set(SCREEN_SCALE,SCREEN_SCALE,SCREEN_SCALE); // scale down large iframe
 cssObject.rotation.set(0,Math.PI/2,0)
 scene.add(cssObject);
 
 // Setting up a plane for detecting when the mouse is over the screen
-const planeGeometry = new THREE.PlaneGeometry(SCREEN_SCALE * BASE_WIDTH * FACTOR,SCREEN_SCALE * BASE_HEIGHT * FACTOR);
+const planeGeometry = new THREE.PlaneGeometry(SCREEN_SCALE * BASE_WIDTH,SCREEN_SCALE * BASE_HEIGHT);
 const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: true });
 const hoverPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 hoverPlane.position.copy(cssObject.position);
@@ -106,7 +105,7 @@ function onMouseMove(event) {
     const intersects = raycaster.intersectObject(hoverPlane);
     hovering = intersects.length > 0;
     if (hovering) {
-      controls.enabled = false;
+      //controls.enabled = false;
     } else {
       controls.enabled = true;
     }
