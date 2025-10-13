@@ -13,15 +13,12 @@ const VIRTUAL_SCREEN_SCALE = 0.0013;
 const CAMERA_BASE_POSITION = new THREE.Vector3(3,4,0);
 
 // Animation variables
-var animating = false;
 var raycaster;
 var screenNormal;
 var camera;
 var controls;
 var cssObject;
 var div;
-var targetPosition;
-var targetQuat;
 // For looking at the screen
 var viewScreenPosition = new THREE.Vector3();
 var viewScreenQuat;
@@ -144,31 +141,24 @@ const onMouseMove = (event) => {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
     if (intersects.length > 0) {
-      if (! animating) {
-        start_fly_to_screen();
-      }
+      start_fly_to_screen();
     } else {
+      /*
       if (!animating && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
         start_fly_away();
       }
+      */
     }
 }
 
 const start_fly_to_screen = () => {
-  animating = true;
-  originalCameraPosition.copy(camera.position);
-  originalCameraQuat.copy(camera.quaternion);
-  targetPosition = viewScreenPosition;
-  targetQuat = viewScreenQuat;
-}
-
-const finish_animation = () => {
-  animating = false;
+  //controls.truck(1,1);
+  controls.moveTo(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z, true);
+  console.log("Move to screen");
 }
 
 const start_fly_away = () => {
   if (originalCameraPosition && originalCameraQuat) {
-    animating = true;
     targetPosition = originalCameraPosition;
     targetQuat = originalCameraQuat;
   }
@@ -180,6 +170,7 @@ const updateScreenVisibility = () => {
   div.style.opacity = THREE.MathUtils.clamp((dot + 0.1) / 1.1, 0, 1); // fade near back
 }
 
+// TODO: Fix this
 const onResize = () => {
   cssRenderer.setSize(window.innerWidth, window.innerHeight);
   webGlRenderer.setSize( window.innerWidth, window.innerHeight );
@@ -198,20 +189,6 @@ const animate = () => {
   }
     webGlRenderer.render( scene, camera );
     cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
-
-  // Zoom into the screen
-  if (animating) {
-    const lerpSpeed = 4.0;
-    const t = 1- Math.exp(-lerpSpeed * delta);
-    camera.position.lerp(targetPosition, t);
-    if (camera.position.distanceTo(targetPosition) < 0.05) {
-      //camera.lookAt(hoverPlane.position);
-      camera.quaternion.slerp(targetQuat, t);
-      if (camera.quaternion.dot(targetQuat) > 0.99999) {
-        finish_animation();
-      }
-    }
-  }
 }
 //controls.addEventListener('change', animate); // only re-render when camera moves
 //animate() // Animate the first frame
