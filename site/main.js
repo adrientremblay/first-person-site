@@ -117,7 +117,7 @@ const init = () => {
   hoverPlane.rotation.copy(cssObject.rotation);
   scene.add(hoverPlane);
   viewScreenPosition.copy(hoverPlane.position);
-  viewScreenPosition.x += 1.5;
+  viewScreenPosition.x += 1.0;
   raycaster = new THREE.Raycaster();
   window.addEventListener('mousemove', onMouseMove);
 
