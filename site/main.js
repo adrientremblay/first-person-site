@@ -12,15 +12,20 @@ const VIRTUAL_SCREEN_SCALE = 0.0013;
 const CAMERA_BASE_POSITION = new THREE.Vector3(5,4,2);
 
 // Animation variables
-var hovering = false;
 var animating = false;
-var hoverTargetPosition = new THREE.Vector3();
 var raycaster;
 var screenNormal;
 var camera;
 var cssObject;
 var div;
+var targetPosition;
 var targetQuat;
+// For looking at the screen
+var viewScreenPosition = new THREE.Vector3();
+var viewScreenQuat;
+// For returning back to orginal camera position
+var originalCameraPosition = new THREE.Vector3();
+var originalCameraQuat = new THREE.Quaternion();
 
 // Renderers
 var cssRenderer;
@@ -99,8 +104,8 @@ const init = () => {
   hoverPlane.position.x += 0.1;
   hoverPlane.rotation.copy(cssObject.rotation);
   scene.add(hoverPlane);
-  hoverTargetPosition.copy(hoverPlane.position);
-  hoverTargetPosition.x += 1.5;
+  viewScreenPosition.copy(hoverPlane.position);
+  viewScreenPosition.x += 1.5;
   raycaster = new THREE.Raycaster();
   window.addEventListener('mousemove', onMouseMove);
 
@@ -113,7 +118,7 @@ const init = () => {
   targetCamera.position.copy(hoverPlane.position); // optional if camera moves
   targetCamera.position.x -= 2;
   targetCamera.lookAt(hoverPlane.position);     // rotate to look at iframe
-  targetQuat = targetCamera.quaternion.clone();
+  viewScreenQuat = targetCamera.quaternion.clone();
 
   // Hooking up the animate function
   webGlRenderer.setAnimationLoop(animate);
@@ -128,24 +133,40 @@ const onMouseMove = (event) => {
     // Raycast
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
-    hovering = intersects.length > 0;
-    if (hovering) {
+    if (intersects.length > 0) {
       controls.enabled = false;
       if (! animating) {
         start_fly_to_screen();
       }
     } else {
       controls.enabled = true;
+
+      if (!animating && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
+        start_fly_away();
+      }
     }
 }
 
 const start_fly_to_screen = () => {
   controls.enabled = false;
   animating = true;
+  originalCameraPosition.copy(camera.position);
+  originalCameraQuat.copy(camera.quaternion);
+  targetPosition = viewScreenPosition;
+  targetQuat = viewScreenQuat;
 }
 
-const finish_fly_to_screen = () => {
+const finish_animation = () => {
   animating = false;
+}
+
+const start_fly_away = () => {
+  if (originalCameraPosition && originalCameraQuat) {
+    controls.enabled = false;
+    animating = true;
+    targetPosition = originalCameraPosition;
+    targetQuat = originalCameraQuat;
+  }
 }
 
 const updateScreenVisibility = () => {
@@ -168,12 +189,12 @@ const animate = () => {
   if (animating) {
     const lerpSpeed = 4.0;
     const t = 1- Math.exp(-lerpSpeed * delta);
-    camera.position.lerp(hoverTargetPosition, t);
-    if (camera.position.distanceTo(hoverTargetPosition) < 0.05) {
+    camera.position.lerp(targetPosition, t);
+    if (camera.position.distanceTo(targetPosition) < 0.05) {
       //camera.lookAt(hoverPlane.position);
       camera.quaternion.slerp(targetQuat, t);
       if (camera.quaternion.dot(targetQuat) > 0.99999) {
-        finish_fly_to_screen();
+        finish_animation();
       }
     }
   }
