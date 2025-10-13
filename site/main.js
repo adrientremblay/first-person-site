@@ -1,21 +1,23 @@
 // Imports
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+import CameraControls from 'camera-controls';
+CameraControls.install( { THREE: THREE } );
 
 // Constants
 const CLOCK = new THREE.Clock();
 const VIRTUAL_SCREEN_WIDTH = 1440;
 const VIRTUAL_SCREEN_HEIGHT = 900;
 const VIRTUAL_SCREEN_SCALE = 0.0013;
-const CAMERA_BASE_POSITION = new THREE.Vector3(5,4,2);
+const CAMERA_BASE_POSITION = new THREE.Vector3(3,4,2);
 
 // Animation variables
 var animating = false;
 var raycaster;
 var screenNormal;
 var camera;
+var controls;
 var cssObject;
 var div;
 var targetPosition;
@@ -32,7 +34,6 @@ var cssRenderer;
 var webGlRenderer
 var scene;
 var hoverPlane;
-var controls;
 
 const init = () => {
   // Setting up cssRenderer
@@ -54,8 +55,18 @@ const init = () => {
 
   // Creating Camera
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-  camera.position.set(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z)
-  camera.rotation.set(0,Math.PI/2,0)
+  camera.position.set(0, 0, 1e-5);
+
+  // Creating Camera Controls
+  controls = new CameraControls( camera, cssRenderer.domElement);
+  //controls.minDistance = controls.maxDistance = 1;
+  controls.azimuthRotateSpeed = - 0.3; // negative value to invert rotation direction
+  controls.polarRotateSpeed   = - 0.3; // negative value to invert rotation direction
+  controls.truckSpeed = 10;
+  controls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
+  controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z);
+  controls.rotate(Math.PI/2,0,0);
+//  controls.setOrbitPoint(camera.position);
 
   // Load the GLTF model
   const loader = new GLTFLoader();
@@ -109,10 +120,6 @@ const init = () => {
   raycaster = new THREE.Raycaster();
   window.addEventListener('mousemove', onMouseMove);
 
-  // Setting up camera controls
-  controls = new OrbitControls(camera, cssRenderer.domElement);
-  controls.target.set(hoverPlane.position.x, hoverPlane.position.y, hoverPlane.position.z);
-
   // Setting up target camera (for looking at the monitor animation)
   const targetCamera = new THREE.Object3D();
   targetCamera.position.copy(hoverPlane.position); // optional if camera moves
@@ -137,13 +144,10 @@ const onMouseMove = (event) => {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
     if (intersects.length > 0) {
-      controls.enabled = false;
       if (! animating) {
         start_fly_to_screen();
       }
     } else {
-      controls.enabled = true;
-
       if (!animating && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
         start_fly_away();
       }
@@ -151,7 +155,6 @@ const onMouseMove = (event) => {
 }
 
 const start_fly_to_screen = () => {
-  controls.enabled = false;
   animating = true;
   originalCameraPosition.copy(camera.position);
   originalCameraQuat.copy(camera.quaternion);
@@ -165,7 +168,6 @@ const finish_animation = () => {
 
 const start_fly_away = () => {
   if (originalCameraPosition && originalCameraQuat) {
-    controls.enabled = false;
     animating = true;
     targetPosition = originalCameraPosition;
     targetQuat = originalCameraQuat;
@@ -191,8 +193,11 @@ const animate = () => {
   updateScreenVisibility();
 
   //requestAnimationFrame(animate);
-  webGlRenderer.render( scene, camera );
-  cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
+  const hasControlsUpdated = controls.update( delta )
+  if (hasControlsUpdated) {
+  }
+    webGlRenderer.render( scene, camera );
+    cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
   // Zoom into the screen
   if (animating) {
