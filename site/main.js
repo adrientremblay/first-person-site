@@ -13,6 +13,7 @@ const VIRTUAL_SCREEN_SCALE = 0.0013;
 const CAMERA_BASE_POSITION = new THREE.Vector3(3,4,0);
 
 // Animation variables
+var animating = false;
 var raycaster;
 var screenNormal;
 var camera;
@@ -63,7 +64,10 @@ const init = () => {
   controls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
   controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z);
   controls.rotate(Math.PI/2,0,0);
-//  controls.setOrbitPoint(camera.position);
+
+  controls.addEventListener( 'sleep', () => {
+    animating = false;
+  } );
 
   // Load the GLTF model
   const loader = new GLTFLoader();
@@ -140,7 +144,7 @@ const onMouseMove = (event) => {
     // Raycast
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
-    if (intersects.length > 0) {
+    if (intersects.length > 0 && !animating) {
       start_fly_to_screen();
     } else {
       /*
@@ -152,7 +156,7 @@ const onMouseMove = (event) => {
 };
 
 const start_fly_to_screen = async () => {
-  //controls.truck(1,1);
+  animating = true;
   await controls.moveTo(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z, true);
   await controls.setLookAt(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z,
      viewScreenPosition.x-1, viewScreenPosition.y, viewScreenPosition.z, true);
