@@ -122,6 +122,9 @@ const init = () => {
 
   // Hooking up the animate function
   webGlRenderer.setAnimationLoop(animate);
+
+  // Hooking up on resize
+  window.addEventListener('resize', onResize);
 }
 
 // On mouse move event for zooming into the screen
@@ -173,6 +176,12 @@ const updateScreenVisibility = () => {
   const camDir = new THREE.Vector3().subVectors(camera.position, cssObject.position).normalize();
   const dot = screenNormal.dot(camDir); // 1 = front, -1 = back
   div.style.opacity = THREE.MathUtils.clamp((dot + 0.1) / 1.1, 0, 1); // fade near back
+}
+
+const onResize = () => {
+  cssRenderer.setSize(window.innerWidth, window.innerHeight);
+  webGlRenderer.setSize( window.innerWidth, window.innerHeight );
+  //camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 }
 
 // Animate function
