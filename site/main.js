@@ -147,11 +147,9 @@ const onMouseMove = (event) => {
     if (intersects.length > 0 && !animating) {
       start_fly_to_screen();
     } else {
-      /*
       if (!animating && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
         start_fly_away();
       }
-      */
     }
 };
 
@@ -164,11 +162,10 @@ const start_fly_to_screen = async () => {
   console.log("Move to screen");
 };
 
-const start_fly_away = () => {
-  if (originalCameraPosition && originalCameraQuat) {
-    targetPosition = originalCameraPosition;
-    targetQuat = originalCameraQuat;
-  }
+const start_fly_away = async () => {
+  animating = true;
+  await controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z, true);
+  console.log("Move back to chair");
 };
 
 const updateScreenVisibility = () => {
