@@ -129,7 +129,7 @@ const init = () => {
 
   // Hooking up on resize
   window.addEventListener('resize', onResize);
-}
+};
 
 // On mouse move event for zooming into the screen
 const onMouseMove = (event) => {
@@ -149,33 +149,36 @@ const onMouseMove = (event) => {
       }
       */
     }
-}
+};
 
-const start_fly_to_screen = () => {
+const start_fly_to_screen = async () => {
   //controls.truck(1,1);
-  controls.moveTo(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z, true);
+  await controls.moveTo(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z, true);
+  await controls.setLookAt(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z,
+     viewScreenPosition.x-1, viewScreenPosition.y, viewScreenPosition.z, true);
+  //controls.lookAt(viewScreenPosition);
   console.log("Move to screen");
-}
+};
 
 const start_fly_away = () => {
   if (originalCameraPosition && originalCameraQuat) {
     targetPosition = originalCameraPosition;
     targetQuat = originalCameraQuat;
   }
-}
+};
 
 const updateScreenVisibility = () => {
   const camDir = new THREE.Vector3().subVectors(camera.position, cssObject.position).normalize();
   const dot = screenNormal.dot(camDir); // 1 = front, -1 = back
   div.style.opacity = THREE.MathUtils.clamp((dot + 0.1) / 1.1, 0, 1); // fade near back
-}
+};
 
 // TODO: Fix this
 const onResize = () => {
   cssRenderer.setSize(window.innerWidth, window.innerHeight);
   webGlRenderer.setSize( window.innerWidth, window.innerHeight );
   //camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-}
+};
 
 // Animate function
 const animate = () => {
@@ -189,7 +192,7 @@ const animate = () => {
   }
     webGlRenderer.render( scene, camera );
     cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
-}
+};
 //controls.addEventListener('change', animate); // only re-render when camera moves
 //animate() // Animate the first frame
 
