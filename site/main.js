@@ -13,6 +13,7 @@ const CAMERA_BASE_POSITION = new THREE.Vector3(5,4,2);
 
 // Animation variables
 var hovering = false;
+var animating = false;
 var hoverTargetPosition = new THREE.Vector3();
 var raycaster;
 var screenNormal;
@@ -92,9 +93,10 @@ const init = () => {
   // Setting up a plane for detecting when the mouse is over the screen
   const planeGeometry = new THREE.PlaneGeometry(VIRTUAL_SCREEN_SCALE * VIRTUAL_SCREEN_WIDTH,VIRTUAL_SCREEN_SCALE * VIRTUAL_SCREEN_HEIGHT);
   const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: true });
+  planeMaterial.visible = false;
   hoverPlane = new THREE.Mesh(planeGeometry, planeMaterial);
   hoverPlane.position.copy(cssObject.position);
-  hoverPlane.position.x -= 0.1;
+  hoverPlane.position.x += 0.1;
   hoverPlane.rotation.copy(cssObject.rotation);
   scene.add(hoverPlane);
   hoverTargetPosition.copy(hoverPlane.position);
@@ -128,10 +130,22 @@ const onMouseMove = (event) => {
     const intersects = raycaster.intersectObject(hoverPlane);
     hovering = intersects.length > 0;
     if (hovering) {
-      //controls.enabled = false;
+      controls.enabled = false;
+      if (! animating) {
+        start_fly_to_screen();
+      }
     } else {
       controls.enabled = true;
     }
+}
+
+const start_fly_to_screen = () => {
+  controls.enabled = false;
+  animating = true;
+}
+
+const finish_fly_to_screen = () => {
+  animating = false;
 }
 
 const updateScreenVisibility = () => {
@@ -151,13 +165,16 @@ const animate = () => {
   cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
   // Zoom into the screen
-  if (hovering) {
+  if (animating) {
     const lerpSpeed = 4.0;
     const t = 1- Math.exp(-lerpSpeed * delta);
     camera.position.lerp(hoverTargetPosition, t);
     if (camera.position.distanceTo(hoverTargetPosition) < 0.05) {
       //camera.lookAt(hoverPlane.position);
       camera.quaternion.slerp(targetQuat, t);
+      if (camera.quaternion.dot(targetQuat) > 0.99999) {
+        finish_fly_to_screen();
+      }
     }
   }
 }
