@@ -10,7 +10,7 @@ const CLOCK = new THREE.Clock();
 const VIRTUAL_SCREEN_WIDTH = 1440;
 const VIRTUAL_SCREEN_HEIGHT = 900;
 const VIRTUAL_SCREEN_SCALE = 0.0013;
-const CAMERA_BASE_POSITION = new THREE.Vector3(3,4,2);
+const CAMERA_BASE_POSITION = new THREE.Vector3(3,4,0);
 
 // Animation variables
 var animating = false;
