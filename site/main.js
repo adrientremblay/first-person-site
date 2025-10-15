@@ -133,6 +133,11 @@ const init = () => {
 
   // Hooking up on resize
   window.addEventListener('resize', onResize);
+
+  // Play ambient rain audio
+  let rainAudio = new Audio('rain_on_window.mp3'); 
+  rainAudio.loop = true;
+  rainAudio.play(); 
 };
 
 // On mouse move event for zooming into the screen
