@@ -146,8 +146,9 @@ const init = () => {
   rainyWindowMaterial = new THREE.ShaderMaterial({
     uniforms: {
       u_time: { value: 0 },
-      u_noiseScale: { value: 10.0 },
-      u_streakIntensity: { value: 0.5 }
+      u_noiseScale: { value: 20.0 },
+      u_streakIntensity: { value: 0.5 },
+      u_scrollSpeed: { value: 1.0},
     },
     transparent: true,
     vertexShader: `
@@ -161,6 +162,7 @@ const init = () => {
       uniform float u_time;
       uniform float u_noiseScale;
       uniform float u_streakIntensity;
+      uniform float u_scrollSpeed;
       varying vec2 vUv;
 
       // Simple 2D noise (could replace with classic perlin/simplex)
@@ -181,7 +183,7 @@ const init = () => {
 
       void main() {
         vec2 uv = vUv;
-        float n = noise(vec2(uv.x * u_noiseScale, uv.y * u_noiseScale + u_time * 0.3));
+        float n = noise(vec2(uv.x * u_noiseScale, uv.y * u_noiseScale + u_time * u_scrollSpeed));
         float streaks = smoothstep(0.45, 0.5, n);
         float alpha = streaks * u_streakIntensity;
 
