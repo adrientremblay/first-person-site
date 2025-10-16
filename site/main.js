@@ -172,14 +172,14 @@ const start_fly_to_screen = async () => {
   await controls.setLookAt(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z,
      viewScreenPosition.x-1, viewScreenPosition.y, viewScreenPosition.z, true);
   //controls.lookAt(viewScreenPosition);
-  console.log("Move to screen");
+  //console.log("Move to screen");
   atScreen = true;
 };
 
 const start_fly_away = async () => {
   animating = true;
   await controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z, true);
-  console.log("Move back to chair");
+  //console.log("Move back to chair");
   atScreen = false;
 };
 

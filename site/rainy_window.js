@@ -37,8 +37,8 @@ export class RainyWindow extends THREE.Mesh {
 
         void main() {
             vec2 uv = vUv;
-            float n = noise(vec2(uv.x * 160.0, uv.y * 40.0 + u_time * u_scrollSpeed));
-            float streaks = smoothstep(0.6, 0.9, n);
+            float n = noise(vec2(uv.x * 100.0, uv.y * 40.0 + u_time * u_scrollSpeed));
+            float streaks = smoothstep(0.4, 0.9, n);
             float alpha = streaks * u_streakIntensity;
 
             gl_FragColor = vec4(vec3(0.8, 0.9, 1.0) * alpha, alpha);
@@ -55,7 +55,7 @@ export class RainyWindow extends THREE.Mesh {
             u_time: { value: 0 },
             u_noiseScale: { value: 20.0 },
             u_streakIntensity: { value: 0.5 },
-            u_scrollSpeed: { value: 5.0},
+            u_scrollSpeed: { value: 3.0},
             u_seed: { value: Math.random()},
         },
         transparent: true,
