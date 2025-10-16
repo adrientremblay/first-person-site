@@ -2,17 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>My first three.js app</title>
+    <title>Adrien Tremblay</title>
     <style>
-      body { margin: 0; }
+      body { 
+        margin: 0; 
+        background-color: black;
+      }
 
-      #blocker {
+      #overlay {
 				position: absolute;
 				top: 0;
-				left: 0;
-				bottom: 0;
-				right: 0;
+				left: 10px;
+        color: yellow;
+        font-family: sans-serif;
+        z-index: 100;
 			}
+
+      a {
+        color: orange;
+      }
     </style>
     <script type="importmap">
         {
@@ -22,8 +30,13 @@
         }
         }
     </script>
+    <link rel="icon" href='favicon.png'>
   </head>
   <body>
     <script type="module" src="/main.js"></script>
+    <div id="overlay">
+      <h1>First Person 3D Site by Adrien Tremblay</h1>
+      For plain website visit <a href="https://adrientremblay.com/site" target="_blank">adrientremblay.com/site</a>
+    </div>
   </body>
 </html>

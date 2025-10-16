@@ -93,7 +93,7 @@ const init = () => {
 
   const iframe = document.createElement('iframe');
   //iframe.src="https://www.youtube.com/embed/ck_ngTil_jQ?rel=0";
-  iframe.src="https://adrientremblay.com";
+  iframe.src="https://adrientremblay.com/site";
   iframe.style.width = VIRTUAL_SCREEN_WIDTH+'px';
   iframe.style.height = VIRTUAL_SCREEN_HEIGHT+'px';
   iframe.style.border = '0';
