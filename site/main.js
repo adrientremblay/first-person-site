@@ -15,6 +15,7 @@ const CAMERA_BASE_POSITION = new THREE.Vector3(3,4,0);
 
 // Animation variables
 var animating = false;
+var atScreen = false;
 var raycaster;
 var screenNormal;
 var camera;
@@ -158,12 +159,10 @@ const onMouseMove = (event) => {
     // Raycast
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(hoverPlane);
-    if (intersects.length > 0 && !animating) {
+    if (intersects.length > 0 && !animating && !atScreen) {
       start_fly_to_screen();
-    } else {
-      if (!animating && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
-        start_fly_away();
-      }
+    } else if (!animating && atScreen && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
+      start_fly_away();
     }
 };
 
@@ -174,12 +173,14 @@ const start_fly_to_screen = async () => {
      viewScreenPosition.x-1, viewScreenPosition.y, viewScreenPosition.z, true);
   //controls.lookAt(viewScreenPosition);
   console.log("Move to screen");
+  atScreen = true;
 };
 
 const start_fly_away = async () => {
   animating = true;
   await controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z, true);
   console.log("Move back to chair");
+  atScreen = false;
 };
 
 const updateScreenVisibility = () => {
