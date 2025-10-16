@@ -59,7 +59,7 @@ export class RainyWindow extends THREE.Mesh {
             u_time: { value: 0 },
             u_noiseScale: { value: 20.0 },
             u_streakIntensity: { value: 0.5 },
-            u_scrollSpeed: { value: 1.0},
+            u_scrollSpeed: { value: 10.0},
             u_seed: { value: Math.random()},
         },
         transparent: true,
