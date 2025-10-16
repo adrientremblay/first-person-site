@@ -46,10 +46,6 @@ export class RainyWindow extends THREE.Mesh {
     `;
 
   constructor() {
-    // Play ambient rain audio
-    let rainAudio = new Audio('rain_on_window.mp3'); 
-    rainAudio.loop = true;
-    rainAudio.play(); 
 
     // Creating the window geometry
     const windowGeometry = new THREE.PlaneGeometry(4,4);

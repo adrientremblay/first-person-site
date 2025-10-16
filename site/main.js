@@ -26,6 +26,7 @@ var viewScreenPosition = new THREE.Vector3();
 var viewScreenQuat;
 // rainy window
 var rainyWindow;
+var rainAudio;
 
 // Renderers
 var cssRenderer;
@@ -120,6 +121,7 @@ const init = () => {
   viewScreenPosition.x += 1.0;
   raycaster = new THREE.Raycaster();
   window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('click', click);
 
   // Setting up target camera (for looking at the monitor animation)
   const targetCamera = new THREE.Object3D();
@@ -138,7 +140,14 @@ const init = () => {
   rainyWindow = new RainyWindow()
   scene.add(rainyWindow);
 
+  // set up ambient rain audio
+  rainAudio = new Audio('rain_on_window.mp3'); 
+  rainAudio.loop = true;
 };
+
+const click = (event) => {
+  rainAudio.play();
+}
 
 // On mouse move event for zooming into the screen
 const onMouseMove = (event) => {
