@@ -161,14 +161,14 @@ const onMouseMove = (event) => {
     const intersects = raycaster.intersectObject(hoverPlane);
     if (intersects.length > 0 && !animating && !atScreen) {
       start_fly_to_screen();
-    } else if (!animating && atScreen && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
+    } else if (atScreen && camera.position.distanceTo(viewScreenPosition) < 0.05 && camera.quaternion.dot(viewScreenQuat) > 0.99999) {
       start_fly_away();
     }
 };
 
 const start_fly_to_screen = async () => {
   animating = true;
-  await controls.moveTo(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z, true);
+  controls.moveTo(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z, true);
   await controls.setLookAt(viewScreenPosition.x, viewScreenPosition.y, viewScreenPosition.z,
      viewScreenPosition.x-1, viewScreenPosition.y, viewScreenPosition.z, true);
   //controls.lookAt(viewScreenPosition);
@@ -177,9 +177,9 @@ const start_fly_to_screen = async () => {
 };
 
 const start_fly_away = async () => {
+  console.log("Move back to chair");
   animating = true;
-  await controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z, true);
-  //console.log("Move back to chair");
+  controls.moveTo(CAMERA_BASE_POSITION.x, CAMERA_BASE_POSITION.y, CAMERA_BASE_POSITION.z, true);
   atScreen = false;
 };
 
