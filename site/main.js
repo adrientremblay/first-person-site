@@ -110,7 +110,7 @@ const init = () => {
   screenNormal = new THREE.Vector3(0, 0, 1).applyQuaternion(cssObject.quaternion); // used for screen visibility
 
   // Setting up a plane for detecting when the mouse is over the screen
-  const planeGeometry = new THREE.PlaneGeometry(VIRTUAL_SCREEN_SCALE * VIRTUAL_SCREEN_WIDTH,VIRTUAL_SCREEN_SCALE * VIRTUAL_SCREEN_HEIGHT);
+  const planeGeometry = new THREE.PlaneGeometry(VIRTUAL_SCREEN_SCALE * VIRTUAL_SCREEN_WIDTH * 1.1,VIRTUAL_SCREEN_SCALE * VIRTUAL_SCREEN_HEIGHT * 1.1);
   const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, visible: true });
   planeMaterial.visible = false;
   hoverPlane = new THREE.Mesh(planeGeometry, planeMaterial);
