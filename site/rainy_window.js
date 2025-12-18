@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 export class RainyWindow extends THREE.Mesh {
+    /*
    static vertexShader = `
         varying vec2 vUv;
         void main() {
@@ -44,13 +45,22 @@ export class RainyWindow extends THREE.Mesh {
             gl_FragColor = vec4(vec3(0.8, 0.9, 1.0) * alpha, alpha);
         }
     `;
+    */
 
   constructor() {
+    // Load the texture for the rain
+    const textureLoader = new THREE.TextureLoader();
+    const rainTexture = textureLoader.load('rain.png');
+    rainTexture.repeat.set(2,2);
+    rainTexture.wrapS = THREE.RepeatWrapping;
+    rainTexture.wrapT = THREE.RepeatWrapping;
 
     // Creating the window geometry
     const windowGeometry = new THREE.PlaneGeometry(4,4);
 
-    const rainyWindowMaterial = new THREE.ShaderMaterial({
+    const rainyWindowMaterial = new THREE.MeshBasicMaterial({
+        map: rainTexture,
+        /*
         uniforms: {
             u_time: { value: 0 },
             u_noiseScale: { value: 20.0 },
@@ -58,9 +68,12 @@ export class RainyWindow extends THREE.Mesh {
             u_scrollSpeed: { value: 3.0},
             u_seed: { value: Math.random()},
         },
+        */
         transparent: true,
+        /*
         vertexShader: RainyWindow.vertexShader,
         fragmentShader: RainyWindow.fragmentShader,
+        */
     });
     super(windowGeometry, rainyWindowMaterial);
     this.position.set(-4.1,4,4.6);

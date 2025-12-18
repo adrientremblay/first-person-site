@@ -94,7 +94,6 @@ const init = () => {
   div.style.height = VIRTUAL_SCREEN_HEIGHT+'px';
 
   const iframe = document.createElement('iframe');
-  //iframe.src="https://www.youtube.com/embed/ck_ngTil_jQ?rel=0";
   iframe.src="https://adrientremblay.com/site";
   iframe.style.width = VIRTUAL_SCREEN_WIDTH+'px';
   iframe.style.height = VIRTUAL_SCREEN_HEIGHT+'px';
@@ -209,7 +208,7 @@ const animate = () => {
     webGlRenderer.render( scene, camera );
     cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
-  rainyWindow.material.uniforms.u_time.value = performance.now() / 1000;
+  //rainyWindow.material.uniforms.u_time.value = performance.now() / 1000;
 };
 //controls.addEventListener('change', animate); // only re-render when camera moves
 //animate() // Animate the first frame
