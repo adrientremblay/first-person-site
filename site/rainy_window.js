@@ -78,5 +78,7 @@ export class RainyWindow extends THREE.Mesh {
     super(windowGeometry, rainyWindowMaterial);
     this.position.set(-4.1,4,4.6);
     this.rotateY(Math.PI/2);
+
+    this.rainTexture = rainTexture;
     }
 }

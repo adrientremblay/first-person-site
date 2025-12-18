@@ -209,6 +209,9 @@ const animate = () => {
     cssRenderer.render(scene, camera);   // iframe //scene.rotation.x += 0.01
 
   //rainyWindow.material.uniforms.u_time.value = performance.now() / 1000;
+  if (rainyWindow.rainTexture) {
+    rainyWindow.rainTexture.offset.y += 0.001;
+  }
 };
 //controls.addEventListener('change', animate); // only re-render when camera moves
 //animate() // Animate the first frame
